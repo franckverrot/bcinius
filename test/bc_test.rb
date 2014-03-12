@@ -45,6 +45,12 @@ describe "BC" do
 
       compiled_code = subject.compile([4.2])
       compiled_code.execute.must_equal 4.2
+
+      compiled_code = subject.compile([4, BC::Addition, 2])
+      compiled_code.execute.must_equal 6
+
+      compiled_code = subject.compile([4.2, BC::Addition, 2.2])
+      compiled_code.execute.must_equal 6.4
     end
   end
 end

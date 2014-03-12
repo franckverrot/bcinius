@@ -14,13 +14,18 @@ module BC
 
   class Compiler
     def compile(sexp)
-      operand1, _, _ = sexp
+      operand1, operation, operand2 = sexp
 
       g = Rubinius::ToolSet.current::TS::Generator.new
 
       g.set_line 1
       g.push_self
       g.push_literal operand1
+
+      if operand2
+        g.push_literal operand2
+        g.send get_rbx_sym(operation), 1, true
+      end
 
       g.ret
       g.close
@@ -31,6 +36,14 @@ module BC
       f = Rubinius::ToolSet.current::TS::CompiledFile
       f.dump m, ARGV[0] || ".compiled.rbc", 1, 1
       return CompiledCode.new
+    end
+
+    def get_rbx_sym(obj)
+      case obj
+      when BC::Addition.class then :+
+      else
+        # No-op
+      end
     end
   end
 end
