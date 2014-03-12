@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 module BC
+  class UnknownToken < RuntimeError ; end
+
   class Addition; end
   class Substraction; end
   class Multiplication; end
@@ -57,7 +59,7 @@ module BC
           tokens.push(Division)
           pos += 1
         else
-          pos += 1
+          raise UnknownToken.new(str[pos])
         end
       end
       tokens

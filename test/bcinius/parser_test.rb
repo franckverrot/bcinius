@@ -46,4 +46,10 @@ describe "parser" do
   it "should recognize an division operation" do
     subject.parse("4/2").must_equal [4, BC::Division, 2]
   end
+
+  it "should tell if it can't parse" do
+    assert_raises(BC::UnknownToken) do
+      subject.parse("hello :-)")
+    end
+  end
 end
