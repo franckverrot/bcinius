@@ -19,32 +19,37 @@ describe "parser" do
   subject { BC::Parser.new }
 
   it "should recognize a number literal" do
-    subject.parse("42").must_equal [42]
+    node = subject.parse("42")
+    node.must_be_kind_of BCinius::ExpressionNode
   end
 
   it "should recognize a float literal" do
-    subject.parse("4.2").must_equal [4.2]
+    node = subject.parse("4.2")
+    node.must_be_kind_of BCinius::ExpressionNode
   end
 
   it "shouldn't care about extra spaces" do
-    subject.parse(" 4    ").must_equal [4]
-    subject.parse("  4.2 ").must_equal [4.2]
+    node = subject.parse(" 4    ")
+    node.must_be_kind_of BCinius::ExpressionNode
+
+    node = subject.parse("  4.2 ")
+    node.must_be_kind_of BCinius::ExpressionNode
   end
 
   it "should recognize an addition operation" do
-    subject.parse("4+2").must_equal [4, BC::Addition, 2]
+    subject.parse("4+2").must_be_kind_of BCinius::ExpressionNode
   end
 
   it "should recognize an substraction operation" do
-    subject.parse("4-2").must_equal [4, BC::Substraction, 2]
+    subject.parse("4-2").must_be_kind_of BCinius::ExpressionNode
   end
 
   it "should recognize an multiplication operation" do
-    subject.parse("4*2").must_equal [4, BC::Multiplication, 2]
+    subject.parse("4*2").must_be_kind_of BCinius::ExpressionNode
   end
 
   it "should recognize an division operation" do
-    subject.parse("4/2").must_equal [4, BC::Division, 2]
+    subject.parse("4/2").must_be_kind_of BCinius::ExpressionNode
   end
 
   it "should tell if it can't parse" do

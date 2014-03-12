@@ -5,8 +5,8 @@ grammar BCinius
 
   rule expression
     operand1:number
-    operation:(addition / substraction / multiplication / division)
-    operand2:number <ExpressionNode>
+    operation:(operator:(addition / substraction / multiplication / division) operand2:number)?
+    <ExpressionNode>
   end
 
   rule addition
@@ -26,7 +26,7 @@ grammar BCinius
   end
 
   rule number
-    space? unit:[0-9]* decimal:('.' [0-9]*)? space? <LiteralNode>
+    space? unit:[0-9]* ('.' [0-9]*)? space? <LiteralNode>
   end
 
   rule space

@@ -18,48 +18,51 @@ require 'polyglot'
 
 module BCinius
   class ExpressionNode < Treetop::Runtime::SyntaxNode
-    def to_a
-      [operand1.value,operation.value,operand2.value]
+    def visit(generator)
+      operand1.visit(generator)
 
-      #if expression
-      #  [operand1.value,operation.value,operand2.value]
-      #else
-      #  [number.value]
-      #end
+      if respond_to?(:operation)
+        if operation.respond_to?(:operator)
+          operation.operand2.visit(generator)
+          operation.operator.visit(generator)
+        end
+      end
     end
   end
 
   class AdditionNode < Treetop::Runtime::SyntaxNode
-    def value
-      BC::Addition
+    def visit(generator)
+      generator.send :+, 1, true
     end
   end
 
   class MultiplicationNode < Treetop::Runtime::SyntaxNode
-    def value
-      BC::Multiplication
+    def visit(generator)
+      generator.send :*, 1, true
     end
   end
 
   class SubstractionNode < Treetop::Runtime::SyntaxNode
-    def value
-      BC::Substraction
+    def visit(generator)
+      generator.send :-, 1, true
     end
   end
 
   class DivisionNode < Treetop::Runtime::SyntaxNode
-    def value
-      BC::Division
+    def visit(generator)
+      generator.send :/, 1, true
     end
   end
 
   class LiteralNode < Treetop::Runtime::SyntaxNode
-    def value
-      if decimal
+    def visit(generator)
+      val = if text_value.include?(".")
         Float(text_value)
       else
         Integer(text_value)
       end
+
+      generator.push_literal val
     end
   end
 end
@@ -105,11 +108,7 @@ module BC
           raise BC::UnknownToken.new(msg, parser.failure_column - 1)
         end
       else
-        if result.respond_to?(:to_a)
-          result.to_a
-        else
-          [result.value]
-        end
+        result
       end
     end
   end

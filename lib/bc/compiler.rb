@@ -32,18 +32,11 @@ module BC
 
   class Compiler
     def compile(sexp)
-      operand1, operation, operand2 = sexp
-
       g = Rubinius::ToolSet.current::TS::Generator.new
-
       g.set_line 1
       g.push_self
-      g.push_literal operand1
 
-      if operand2
-        g.push_literal operand2
-        g.send get_rbx_sym(operation), 1, true
-      end
+      sexp.visit(g)
 
       g.ret
       g.close
