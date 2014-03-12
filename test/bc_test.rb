@@ -39,13 +39,15 @@ describe "BC" do
   describe "compiler" do
     subject { BC::Compiler.new }
 
-    it "can produce bytecode executables" do
+    it "generates code for basic literals" do
       compiled_code = subject.compile([42])
       compiled_code.execute.must_equal 42
 
       compiled_code = subject.compile([4.2])
       compiled_code.execute.must_equal 4.2
+    end
 
+    it "generate code for additions" do
       compiled_code = subject.compile([4, BC::Addition, 2])
       compiled_code.execute.must_equal 6
 
