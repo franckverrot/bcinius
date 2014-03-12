@@ -23,8 +23,8 @@ def parse_and_compile(input, output)
     output.puts "=> #{result}"
   rescue BC::UnknownToken => exception
     output.puts "=> Caught parsing error..."
-    output.puts source
-    output.puts exception.position
+    output.puts "              " + source
+    output.puts "Error is here " + '~' * exception.position + '^'
   rescue
     output.puts "Quitting..."
     exit
