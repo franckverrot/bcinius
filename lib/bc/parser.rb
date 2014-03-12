@@ -13,6 +13,59 @@
 
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+require 'treetop'
+require 'polyglot'
+
+module BCinius
+  class ExpressionNode < Treetop::Runtime::SyntaxNode
+    def to_a
+      [operand1.value,operation.value,operand2.value]
+
+      #if expression
+      #  [operand1.value,operation.value,operand2.value]
+      #else
+      #  [number.value]
+      #end
+    end
+  end
+
+  class AdditionNode < Treetop::Runtime::SyntaxNode
+    def value
+      BC::Addition
+    end
+  end
+
+  class MultiplicationNode < Treetop::Runtime::SyntaxNode
+    def value
+      BC::Multiplication
+    end
+  end
+
+  class SubstractionNode < Treetop::Runtime::SyntaxNode
+    def value
+      BC::Substraction
+    end
+  end
+
+  class DivisionNode < Treetop::Runtime::SyntaxNode
+    def value
+      BC::Division
+    end
+  end
+
+  class LiteralNode < Treetop::Runtime::SyntaxNode
+    def value
+      if decimal
+        Float(text_value)
+      else
+        Integer(text_value)
+      end
+    end
+  end
+end
+
+Treetop.load 'lib/grammar'
+
 module BC
   class UnknownToken < RuntimeError
     attr_reader :position
@@ -28,58 +81,36 @@ module BC
   class Multiplication; end
   class Division; end
 
+
   class Parser
     def parse(str)
-      decimal = ""
-      pos = 0
-      tokens = Array.new
+      parser = ::BCiniusParser.new
+      result = nil
+      begin
+        result = parser.parse(str)
+      rescue Exception => e
+        puts "[" + e.inspect
+        puts parser.inspect
+        puts result.inspect
+        puts "["
+      end
 
-      while pos < str.length
-        case str[pos]
-        when /\d/
-          # parse units
-          unit, pos = consume_number_literal(str, pos)
-
-          # parse decimals
-          if /\./.match(str[pos])
-            pos += 1
-            decimal, pos = consume_number_literal(str, pos)
-          end
-
-          # return value
-          if decimal.empty?
-            tokens.push Integer(unit)
-          else
-            tokens.push Float("#{unit}.#{decimal}")
-          end
-        when /\+/
-          tokens.push(Addition)
-          pos += 1
-        when /-/
-          tokens.push(Substraction)
-          pos += 1
-        when /\*/
-          tokens.push(Multiplication)
-          pos += 1
-        when /\//
-          tokens.push(Division)
-          pos += 1
-        when /\s/
-          pos += 1
+      if !result
+        if parser.terminal_failures.any?
+          msg = parser.terminal_failures.join("\n")
+          parser.failure_reason =~ /^(Expected .+) after/m
+          msg += "\n#{$1.gsub("\n", '$NEWLINE')}:\n"
+          msg += "\n#{str.lines.to_a[parser.failure_line - 1]}\n"
+          msg += "\n#{'~' * (parser.failure_column - 1)}^\n"
+          raise BC::UnknownToken.new(msg, parser.failure_column - 1)
+        end
+      else
+        if result.respond_to?(:to_a)
+          result.to_a
         else
-          raise UnknownToken.new(str[pos], pos)
+          [result.value]
         end
       end
-      tokens
-    end
-
-    def consume_number_literal(str, pos)
-      token = ""
-      while pos < str.length && /[\d\s]/.match(str[pos])
-        token += str[pos] unless /\s/.match(str[pos])
-        pos += 1
-      end
-      return [token, pos]
     end
   end
 end

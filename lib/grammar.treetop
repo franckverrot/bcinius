@@ -1,0 +1,35 @@
+grammar BCinius
+  rule program
+    expression / number
+  end
+
+  rule expression
+    operand1:number
+    operation:(addition / substraction / multiplication / division)
+    operand2:number <ExpressionNode>
+  end
+
+  rule addition
+    '+' <AdditionNode>
+  end
+
+  rule substraction
+    '-' <SubstractionNode>
+  end
+
+  rule multiplication
+    "*" <MultiplicationNode>
+  end
+
+  rule division
+    '/' <DivisionNode>
+  end
+
+  rule number
+    space? unit:[0-9]* decimal:('.' [0-9]*)? space? <LiteralNode>
+  end
+
+  rule space
+    [\s]*
+  end
+end
