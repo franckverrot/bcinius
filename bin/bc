@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+require 'bc'
+
+def show_prompt
+  $stdout.write "> "
+end
+
+def parse_and_compile(input, output)
+  compiler = BC::Compiler.new
+
+  begin
+    source   = ""
+
+    while ((char = input.getc) != "\n")
+      source += char
+    end
+
+    sexp = BC::Parser.new.parse(source)
+    code = compiler.compile(sexp)
+
+    result = code.execute
+
+    output.puts "=> #{result}"
+  rescue BC::UnknownToken => exception
+    output.puts "=> Caught parsing error..."
+    output.puts source
+    output.puts exception.position
+  rescue
+    output.puts "Quitting..."
+    exit
+  end
+end
+
+def show_banner
+  $stdout.puts """
+  bcinius Copyright (C) 2014 Franck Verrot <franck@verrot.fr>
+  This program comes with ABSOLUTELY NO WARRANTY; for details type `rake license'.
+  This is free software, and you are welcome to redistribute it
+  under certain conditions; type `rake license' for details.
+
+  [Enter an expression and type enter. Ctrl-d to quit]
+  """
+end
+
+Signal.trap("INT") { exit }
+
+show_banner
+loop do
+  show_prompt
+  parse_and_compile($stdin, $stdout)
+end
+
