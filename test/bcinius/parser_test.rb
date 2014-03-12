@@ -51,5 +51,17 @@ describe "parser" do
     assert_raises(BC::UnknownToken) do
       subject.parse("hello :-)")
     end
+
+    begin
+      subject.parse("hello :-)")
+    rescue BC::UnknownToken => exception
+      exception.position.must_equal 0
+    end
+
+    begin
+      subject.parse("1 + wat")
+    rescue BC::UnknownToken => exception
+      exception.position.must_equal 4
+    end
   end
 end

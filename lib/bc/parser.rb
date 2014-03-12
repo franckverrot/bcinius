@@ -14,7 +14,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 module BC
-  class UnknownToken < RuntimeError ; end
+  class UnknownToken < RuntimeError
+    attr_reader :position
+
+    def initialize(token_repr, position)
+      super(token_repr)
+      @position = position
+    end
+  end
 
   class Addition; end
   class Substraction; end
@@ -22,11 +29,10 @@ module BC
   class Division; end
 
   class Parser
-    def parse(input)
+    def parse(str)
       decimal = ""
       pos = 0
       tokens = Array.new
-      str = input.gsub(' ', '')
 
       while pos < str.length
         case str[pos]
@@ -58,8 +64,10 @@ module BC
         when /\//
           tokens.push(Division)
           pos += 1
+        when /\s/
+          pos += 1
         else
-          raise UnknownToken.new(str[pos])
+          raise UnknownToken.new(str[pos], pos)
         end
       end
       tokens
