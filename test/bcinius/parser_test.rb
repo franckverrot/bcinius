@@ -1,53 +1,34 @@
-!RBIX
-1
-1
-M
-1
-n
-n
-n
-i
-10
-5
-7
-0
-7
-1
-48
-50
-2
-1
-11
-I
-3
-I
-0
-I
-0
-I
-0
-I
-0
-n
-p
-3
-d
- +0.525000000000000022204460492503130808472633361816406250     3
-d
- +0.550000000000000044408920985006261616945266723632812500     2
-x
-E
-8
-US-ASCII
-1
-+
-p
-3
-I
-0
-I
-1
-I
-a
-n
-n
+require 'helper'
+
+describe "parser" do
+  subject { BC::Parser.new }
+
+  it "should recognize a number literal" do
+    subject.parse("42").must_equal [42]
+  end
+
+  it "should recognize a float literal" do
+    subject.parse("4.2").must_equal [4.2]
+  end
+
+  it "shouldn't care about extra spaces" do
+    subject.parse(" 4    ").must_equal [4]
+    subject.parse("  4.2 ").must_equal [4.2]
+  end
+
+  it "should recognize an addition operation" do
+    subject.parse("4+2").must_equal [4, BC::Addition, 2]
+  end
+
+  it "should recognize an substraction operation" do
+    subject.parse("4-2").must_equal [4, BC::Substraction, 2]
+  end
+
+  it "should recognize an multiplication operation" do
+    subject.parse("4*2").must_equal [4, BC::Multiplication, 2]
+  end
+
+  it "should recognize an division operation" do
+    subject.parse("4/2").must_equal [4, BC::Division, 2]
+  end
+end
