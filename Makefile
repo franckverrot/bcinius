@@ -7,3 +7,6 @@ parser:
 
 compiler:
 	ruby -Ilib:test test/bcinius/compiler_test.rb
+
+console:
+	RUBYLIB=lib ruby -w bin/bc
