@@ -13,5 +13,10 @@ describe "BC" do
       subject.parse("4.2").must_equal 4.2
     end
 
+    it "shouldn't care about extra spaces" do
+      subject.parse(" 4    ").must_equal 4
+      subject.parse("  4.2 ").must_equal 4.2
+    end
+
   end
 end

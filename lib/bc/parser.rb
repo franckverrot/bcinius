@@ -15,8 +15,8 @@ module BC
 
     def consume_number_literal(str, pos)
       token = ""
-      while pos < str.length && /\d/.match(str[pos])
-        token += str[pos]
+      while pos < str.length && /[\d\s]/.match(str[pos])
+        token += str[pos] unless /\s/.match(str[pos])
         pos += 1
       end
       return [token, pos]
