@@ -1,6 +1,9 @@
 module BC
   require 'rubinius/compiler'
 
+  class UnknownOperator < RuntimeError
+  end
+
   class CompiledCode
     def execute
       script_name = ARGV[0] || ".compiled.rbc"
@@ -39,10 +42,13 @@ module BC
     end
 
     def get_rbx_sym(obj)
-      case obj
-      when BC::Addition.class then :+
+      case
+      when obj == BC::Addition then :+
+      when obj == BC::Substraction then :-
+      when obj == BC::Multiplication then :*
+      when obj == BC::Division then :/
       else
-        # No-op
+        raise UnknownOperator.new(obj)
       end
     end
   end
