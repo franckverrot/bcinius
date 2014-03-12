@@ -1,16 +1,39 @@
 module BC
+  class Addition
+  end
   class Parser
-    def parse(str)
+    def parse(input)
       decimal = ""
-      unit, pos = consume_number_literal(str, 0)
-      if /\./.match(str[pos])
-        decimal, pos = consume_number_literal(str, pos + 1)
+      pos = 0
+      tokens = Array.new
+      str = input.gsub(' ', '')
+
+      while pos < str.length
+        case str[pos]
+        when /\d/
+          # parse units
+          unit, pos = consume_number_literal(str, pos)
+
+          # parse decimals
+          if /\./.match(str[pos])
+            pos += 1
+            decimal, pos = consume_number_literal(str, pos)
+          end
+
+          # return value
+          if decimal.empty?
+            tokens.push Integer(unit)
+          else
+            tokens.push Float("#{unit}.#{decimal}")
+          end
+        when /\+/
+          tokens.push(Addition)
+          pos += 1
+        else
+          pos += 1
+        end
       end
-      if decimal.empty?
-        Integer(unit)
-      else
-        Float("#{unit}.#{decimal}")
-      end
+      tokens
     end
 
     def consume_number_literal(str, pos)
