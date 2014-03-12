@@ -35,4 +35,13 @@ describe "BC" do
     end
 
   end
+
+  describe "compiler" do
+    subject { BC::Compiler.new }
+
+    it "can produce bytecode executables" do
+      compiled_code = subject.compile([42])
+      compiled_code.execute.must_equal 42
+    end
+  end
 end
