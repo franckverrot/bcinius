@@ -14,12 +14,14 @@ module BC
 
   class Compiler
     def compile(sexp)
+      operand1, _, _ = sexp
 
       g = Rubinius::ToolSet.current::TS::Generator.new
 
       g.set_line 1
+      g.push_self
+      g.push_literal operand1
 
-      g.push_literal 42
       g.ret
       g.close
 

@@ -42,6 +42,9 @@ describe "BC" do
     it "can produce bytecode executables" do
       compiled_code = subject.compile([42])
       compiled_code.execute.must_equal 42
+
+      compiled_code = subject.compile([4.2])
+      compiled_code.execute.must_equal 4.2
     end
   end
 end
