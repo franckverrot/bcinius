@@ -22,5 +22,17 @@ describe "BC" do
       subject.parse("4+2").must_equal [4, BC::Addition, 2]
     end
 
+    it "should recognize an substraction operation" do
+      subject.parse("4-2").must_equal [4, BC::Substraction, 2]
+    end
+
+    it "should recognize an multiplication operation" do
+      subject.parse("4*2").must_equal [4, BC::Multiplication, 2]
+    end
+
+    it "should recognize an division operation" do
+      subject.parse("4/2").must_equal [4, BC::Division, 2]
+    end
+
   end
 end

@@ -1,6 +1,9 @@
 module BC
-  class Addition
-  end
+  class Addition; end
+  class Substraction; end
+  class Multiplication; end
+  class Division; end
+
   class Parser
     def parse(input)
       decimal = ""
@@ -28,6 +31,15 @@ module BC
           end
         when /\+/
           tokens.push(Addition)
+          pos += 1
+        when /-/
+          tokens.push(Substraction)
+          pos += 1
+        when /\*/
+          tokens.push(Multiplication)
+          pos += 1
+        when /\//
+          tokens.push(Division)
           pos += 1
         else
           pos += 1
